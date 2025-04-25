@@ -5,11 +5,14 @@ var fs = require("fs");
 http
   .createServer(function (req, res) {
     var q = url.parse(req.url, true);
-    var filename = "." + q.pathname;
-    fs.readFile(filename + ".html", function (err, data) {
+    var filename = "." + q.pathname + ".html";
+    fs.readFile(filename, function (err, data) {
       if (err) {
-        res.writeHead(404, { "Content-Type": "text/html" });
-        return res.end("404 Not Found");
+        fs.readFile("./404.html", function (err404, data404) {
+          res.writeHead(404, { "Content-Type": "text/html" });
+          return res.end(err404 ? "404 Not Found" : data404);
+        });
+        return;
       }
       res.writeHead(200, { "Content-Type": "text/html" });
       res.write(data);
@@ -22,4 +25,4 @@ http
 //http://localhost:8080/about
 //http://localhost:8080/contact-me
 //http://localhost:8080/404
-//http://localhost:8080/index
+//http://localhost:8080/badurl
